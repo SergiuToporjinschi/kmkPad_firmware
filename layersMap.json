@@ -1,0 +1,27 @@
+[
+    {
+        "Name": "First layer",
+        "Active": true,
+        "KeyMap": ["A", "w", "e", "r", "t", "N1","N2","N3","N4","N5"],
+        "EncoderMap": ["VOLU", "VOLD", "MUTE"]
+    },
+    {
+        "Name":"Second layer",
+        "Active": true,
+        "App" : "notepad++",
+        "KeyMap":  ["N1","N2","N3","N4","N5", "Q", "w", "e", "r", "t"],
+        "EncoderMap": ["VOLU", "VOLD", "MUTE"]
+    },{
+        "Name":"Another layer",
+        "Active": true,
+        "App" : "notepad++",
+        "KeyMap":  ["X","Y","U","I","YU", "O", "w", "e", "r", "t"],
+        "EncoderMap": ["VOLU", "VOLD", "MUTE"]
+    },{
+        "Name":"Third layer",
+        "Active": true,
+        "App" : "notepad++",
+        "KeyMap":  ["A","B","C","D","E", "F", "G", "H", "I", "J"],
+        "EncoderMap": ["VOLU", "VOLD", "MUTE"]
+    }
+]
