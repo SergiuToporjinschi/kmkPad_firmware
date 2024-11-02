@@ -53,7 +53,7 @@ _INIT_SEQUENCE = (
     b"\xa1\x00"  # segment remap = 1 (POR=0, down rotation)
     b"\xc8\x00"  # scan decrement
     b"\xda\x01\x12"  # set com pins
-    b"\x81\x01\xff"  # contrast setting = 0xff
+    b"\x81\x06"  # contrast setting = 0xff
     b"\xd9\x01\x1f"  # pre-charge/dis-charge period mode: 2 DCLKs/2 DCLKs (POR)
     b"\xdb\x01\x40"  # VCOM deselect level = 0.770 (POR)
     b"\x20\x01\x20"  #

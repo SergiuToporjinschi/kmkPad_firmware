@@ -25,9 +25,9 @@ keyboard.debug_enabled = True
 
 ssd1306Inst = SH1106_I2C(busio.I2C(board.GP21, board.GP20))
 display = Display(
-    display=ssd1306Inst, width=128, height=64, entries=[], brightness=0.5,
-    dim_time=2, dim_target=0.1, brightness_step=0.01, off_time=20,
-    flip=False, powersave_dim_time=2, powersave_dim_target=0.01, powersave_off_time=20
+    display=ssd1306Inst, width=128, height=64, entries=[], brightness=0.7,
+    dim_time=10, dim_target=0, brightness_step=0.05, off_time=00,
+    flip=False, #powersave_dim_time=2, powersave_dim_target=0.01, powersave_off_time=20
 )
 
 encoder_handler = EncoderHandler()
@@ -46,7 +46,7 @@ s = KC.MACRO("Wow, KMK is awesome!")
 keyboard.keymap = [
     [
         KC.N1, KC.N2, KC.N3, KC.N4, KC.N5,
-        KC.N6, KC.N7, KC.N8, KC.N9, KC.N0,
+        KC.N6, KC.N7, KC.DIS_BRI, KC.DIS_BRD, KC.SK_LINE,
     ],
     [
         KC.F5, KC.N2, KC.N3, KC.N4, KC.N5,

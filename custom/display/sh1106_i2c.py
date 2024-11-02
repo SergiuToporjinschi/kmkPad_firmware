@@ -1,6 +1,6 @@
 import busio
 import board  # Add this import
-
+import lib.sh1106
 import adafruit_displayio_sh1106  # Display-specific library
 import displayio
 
@@ -26,6 +26,12 @@ class SH1106_I2C(DisplayBase):
             height=height,
             rotation=rotation,
         )
+        # self.display = lib.sh1106(
+        #     displayio.I2CDisplay(self.i2c, device_address=self.device_address),
+        #     width=width,
+        #     height=height,
+        #     rotation=rotation,
+        # )
 
         return self.display
 

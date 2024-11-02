@@ -1,6 +1,13 @@
 from kmk.keys import Key, make_key
 from kmk.extensions import Extension
 from kmk.utils import Debug
+from kmk.extensions.display import Display
+from adafruit_display_text import label
+from adafruit_display_shapes.rect import Rect   
+from adafruit_display_shapes.line import Line
+
+import terminalio
+import displayio
 
 debug = Debug(__name__)
 
@@ -11,8 +18,12 @@ class ScreenKey(Key):
         self.message = message
         self.key = key
 class Screen(Extension):
+    _display:Display = None
+
     def __init__(self):
         debug("Screen extension initialized")
+        self._lastLayer = None
+        self._display = None
         make_key(
             ('SK_LINE',),
             on_press=self.on_screen_line_press,
@@ -26,12 +37,21 @@ class Screen(Extension):
         # )
         pass
     def on_screen_line_press(self, key, keyboard, a, b):
-        debug(f"Screen key pressed: {key} {keyboard}")
+        if self._display is not None:
+            debug(f"Screen key pressed: {key} {keyboard}")
+            splash = displayio.Group()
+            text_area = label.Label(terminalio.FONT, text="sceen line", color=0xFFFFFF, x=0, y=10, anchored_point=(0.0, 0.0))
+            middleLine = Line(0, 32, 128, 32, 0xFFFFFF)
+
+            splash.append(middleLine)
+            splash.append(text_area)
+            self._display.display.root_group = splash
         # keyboard.display.entries[key.line] = key.message
         # if key.key is not None:
         #     keyboard.tap_key(key)
     def on_screen_line_release(self, key, keyboard, a, b):
-        debug(f"Screen key pressed: {key} {keyboard.extensions}")
+        pass
+        # debug(f"Screen key pressed: {key} {keyboard.extensions}")
         # for  extension in keyboard.extensions:
         #     if isinstance(extension, Display):
         #         extension.on_screen_line_release(key, keyboard)
@@ -40,15 +60,26 @@ class Screen(Extension):
         #     keyboard.tap_key(key)
                              
     def on_runtime_enable(self, keyboard):
-        raise NotImplementedError
+        debug("Screen extension enabled")
+
+        # raise NotImplementedError 
 
     def on_runtime_disable(self, keyboard):
-        raise NotImplementedError
+        debug("Screen extension disabled")
+        # raise NotImplementedError
 
     def during_bootup(self, keyboard):
         # raise NotImplementedError
+        if self._display is None:
+            for extension in keyboard.extensions:
+                if isinstance(extension, Display):
+                    debug("Screen extension found")
+                    self._display = extension
+                    break
         pass
     def before_matrix_scan(self, keyboard):
+        debug(f"Screen extension before matrix scan {keyboard.matrix_update5}")
+
         pass # raise NotImplementedError
 
     def after_matrix_scan(self, keyboard):
