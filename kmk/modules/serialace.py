@@ -28,9 +28,6 @@ class SerialACE(Module):
         # Serial.data isn't initialized.
         if not data:
             return
-        
-        if not data.connected:
-            return
 
         # Nothing to parse.
         if data.in_waiting == 0:

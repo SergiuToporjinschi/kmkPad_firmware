@@ -4,6 +4,7 @@ except ImportError:
     pass
 
 from supervisor import ticks_ms
+
 from usb_cdc import console
 
 
@@ -25,7 +26,6 @@ class Debug:
     def __call__(self, *message: str, name: Optional[str] = None) -> None:
         if not name:
             name = self.name
-        
         print(ticks_ms(), end=' ')
         print(name, end=': ')
         print(*message, sep='')

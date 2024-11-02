@@ -136,11 +136,11 @@ class Display(Extension):
         self.brightness = brightness
         self.brightness_step = brightness_step
         self.timer_start = ticks_ms()
-        self.powersave = True
+        self.powersave = False
         self.dim_time_ms = dim_time * 1000
         self.dim_target = dim_target
         self.off_time_ms = off_time * 1000
-        self.powersave_dim_time_ms = powersave_dim_time * 1000
+        self.powersavedim_time_ms = powersave_dim_time * 1000
         self.powersave_dim_target = powersave_dim_target
         self.powersave_off_time_ms = powersave_off_time * 1000
         self.dim_period = PeriodicTimer(50)
@@ -151,6 +151,7 @@ class Display(Extension):
 
     def render(self, layer):
         splash = displayio.Group()
+
         for entry in self.entries:
             if entry.layer != layer and entry.layer is not None:
                 continue
