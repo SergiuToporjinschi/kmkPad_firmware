@@ -17,6 +17,7 @@ from kmk.modules.holdtap import HoldTap
 from custom.module.desktop_connection import DesktopConnection
 from custom.display.sh1106_i2c import SH1106_I2C
 from custom.module.joystick_key_press import JoystickHandler  
+from custom.display.screen import Screen
 
 keyboard = KMKKeyboard()
 keyboard.col_pins = (board.GP13, board.GP12, board.GP11, board.GP10, board.GP9)
@@ -38,7 +39,7 @@ joystick = JoystickHandler()
 joystick.pins = ((board.GP27, board.GP26, board.GP22, 90),)
 joystick.map = [((KC.W, KC.S, KC.A, KC.D, KC.X),)]  # ⬆️⬇️⬅️➡️ 
 
-keyboard.extensions = [display, MediaKeys()]
+keyboard.extensions = [display, MediaKeys(), Screen()]
 keyboard.modules = [joystick, encoder_handler, Macros(), Layers(), DesktopConnection(), HoldTap()]
 
 ctrl_Shift_F5 = KC.MACRO(Press(KC.LCTL), Press(KC.LSFT), Tap(KC.F5), Release(KC.LSFT), Release(KC.LCTL))
@@ -47,7 +48,7 @@ s = KC.MACRO("Wow, KMK is awesome!")
 keyboard.keymap = [
     [
         KC.N1, KC.N2, KC.N3, KC.N4, KC.N5,
-        KC.N6, KC.N7, KC.N8, KC.N9, KC.N0,
+        KC.N6, KC.N7, KC.N8, KC.N9, KC.N9,
     ],
     [
         KC.get('F5'), KC.N2, KC.N3, KC.N4, KC.N5,
