@@ -8,7 +8,7 @@ class ScreenKey(Key):
         self.message = message
         self.key = key
 
-class Sceen(Extension):
+class Screen(Extension):
     def __init__(self):
         make_argumented_key(
             names=('SCREEN_LINE',),

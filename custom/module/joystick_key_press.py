@@ -2,6 +2,7 @@ from kmk.utils import Debug
 from kmk.modules import Module
 import digitalio
 import analogio
+
 debug = Debug(__name__)
 
 class BaseJoystick:
@@ -11,13 +12,12 @@ class BaseJoystick:
         self._direction = None
         self.on_move_do = None
         self.on_button_do = None
-    pass
 
     def get_state(self):
-            return {
-                'direction': self._direction,
-                'is_pressed': not self._button_state,
-            }
+        return {
+            'direction': self._direction,
+            'is_pressed': not self._button_state,
+        }
 
     def update_state(self):
         # debug(f'Axies: {self.pin_vrx.get_value()} {self.pin_vry.get_value()}') 
@@ -29,10 +29,9 @@ class BaseJoystick:
         # if joystick is far LEFT X value is between 0 and -5 (-5, 0)
         # if joystick is far DOWN Y value is between 0 and 5 (0, 5)
         # if joystick is far RIGHT X value is between 0 and 5 (5, 0)
-        # b1=⬆️ 2=➡️ 3=⬇️ 4=⬅️ inary calculation first bit(from right to left) is up, second bit is right third bit is down fourth bit is left 
-        new_direction = ((self.pin_vry.get_value() < 0) << 3) | ( self.pin_vrx.get_value() > 0) << 2 | ((self.pin_vry.get_value() > 0) << 1) | ((self.pin_vrx.get_value() < 0) << 0)
+        # b1=⬆️ 2=➡️ 3=⬇️ 4=⬅️ binary calculation first bit(from right to left) is up, second bit is right third bit is down fourth bit is left 
+        new_direction = ((self.pin_vry.get_value() < 0) << 3) | (self.pin_vrx.get_value() > 0) << 2 | ((self.pin_vry.get_value() > 0) << 1) | ((self.pin_vrx.get_value() < 0) << 0)
         # Rotate binary values to match joystick orientation (0, 90, 180, or 270 degrees)
-
         new_direction = self.rotate(new_direction, self.rotation)
 
         if new_direction != self._direction:
@@ -84,7 +83,6 @@ class GPIOJoystick(BaseJoystick):
         if self.rotation not in (0, 90, 180, 270):
             debug("Invalid rotation value. Must be 0, 90, 180, or 270.")
             self.rotation = 0
-            return
 
     def button_event(self):
         # debug(f'Button event: {self.pin_button.get_value()}')
@@ -133,15 +131,14 @@ class JoystickPin:
         return result
     
     def filter_dead_zone(self, value):
-        in_min,in_max,out_min,out_max = (400, 65000, -5, 5) #TODO add calibration add 3.3v to ADC Ref pin ??!?!
-        return int((value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min)  if abs(value - 32768) > 500 else 0
+        in_min, in_max, out_min, out_max = (400, 65000, -5, 5) # TODO: add calibration add 3.3v to ADC Ref pin ??!?! 
+        return int((value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min) if abs(value - 32768) > 500 else 0
 
 class JoystickHandler(Module): 
     def __init__(self):
         self.joysticks = []
         self.pins = None
         self.map = None
-        pass
 
     def during_bootup(self, keyboard):
         if self.pins and self.map:
@@ -161,7 +158,6 @@ class JoystickHandler(Module):
                     self.joysticks.append(new_joystick)
                 except Exception as e:
                     print(e)
-        return
 
     def on_move_do(self, keyboard, joystick_id, state):
         if self.map:
@@ -176,7 +172,6 @@ class JoystickHandler(Module):
                 keyboard.add_key(self.map[layer_id][joystick_id][0])
             else:
                 keyboard.remove_key(self.map[layer_id][joystick_id][0])
-            
             
             if b2: # 2=➡️
                 keyboard.add_key(self.map[layer_id][joystick_id][3])
@@ -202,7 +197,6 @@ class JoystickHandler(Module):
     def before_matrix_scan(self, keyboard):
         for joystick in self.joysticks:
             joystick.update_state()
-        pass
 
     def after_matrix_scan(self, keyboard):
         pass

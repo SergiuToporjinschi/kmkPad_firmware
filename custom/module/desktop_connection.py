@@ -5,8 +5,6 @@ from usb_cdc import data
 from custom.desktop_app.command import CommandHandler
 import json
 
-
-
 debug = Debug(__name__)
 
 class DesktopConnection(Module):
@@ -14,14 +12,14 @@ class DesktopConnection(Module):
     connectionStatus: bool = False
     commandHandler: CommandHandler = CommandHandler()
     
-    deviceInfo = {  #TODO move this in configuration
-                "Name": "Dev Pad",
-                "Version": "0.1",
-                "VID": "0x6001",
-                "PID": "0x1000" 
-            }
+    # Move deviceInfo to configuration
+    deviceInfo = {
+        "Name": "Dev Pad",
+        "Version": "0.1",
+        "VID": "0x6001",
+        "PID": "0x1000"
+    }
     
-    # The below methods should be implemented by subclasses
     def __init__(self):
         pass
 
@@ -30,7 +28,6 @@ class DesktopConnection(Module):
             data.timeout = 0
         except AttributeError:
             pass
-        pass
 
     def before_matrix_scan(self, keyboard):
         '''
@@ -50,7 +47,6 @@ class DesktopConnection(Module):
             return
 
         resp = self.commandHandler.Execute(keyboard, line.decode('utf-8'))
-
         self._writeAndFlash(resp)
 
     def after_hid_send(self, keyboard):

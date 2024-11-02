@@ -1,4 +1,5 @@
 import busio
+import board  # Add this import
 
 import adafruit_displayio_sh1106  # Display-specific library
 import displayio
@@ -16,7 +17,7 @@ class SH1106_I2C(DisplayBase):
         # i2c initialization
         self.i2c = i2c
         if self.i2c is None:
-            self.i2c = busio.I2C(sck, sda)
+            self.i2c = busio.I2C(sck or board.SCL, sda or board.SDA)  # Use board pins if not provided
 
     def during_bootup(self, width, height, rotation):
         self.display = adafruit_displayio_sh1106.SH1106(
