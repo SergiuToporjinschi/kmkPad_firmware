@@ -1,18 +1,16 @@
 import board 
-import displayio
 import busio
 
 from kmk.kmk_keyboard import KMKKeyboard
-from kmk.keys import KC, Key, KeyAttrDict, ConsumerKey, MouseKey, ModifierKey, KeyboardKey, ModifiedKey
+from kmk.keys import KC
 from kmk.scanners import DiodeOrientation
 from kmk.modules.encoder import EncoderHandler
-from kmk.modules.layers import Layers, LayerKey
+from kmk.modules.layers import Layers
 from kmk.extensions.display import Display
 from kmk.extensions.display import TextEntry
 from kmk.extensions.media_keys import MediaKeys
 from kmk.modules.macros import Press, Release, Tap
 from kmk.modules.macros import Macros
-from kmk.modules.holdtap import HoldTap
 
 from custom.module.desktop_connection import DesktopConnection
 from custom.display.sh1106_i2c import SH1106_I2C
@@ -36,11 +34,11 @@ encoder_handler = EncoderHandler()
 encoder_handler.pins = ((board.GP17, board.GP16, board.GP18, False, 1),)
 
 joystick = JoystickHandler()
-joystick.pins = ((board.GP27, board.GP26, board.GP22, 90),)
-joystick.map = [((KC.W, KC.S, KC.A, KC.D, KC.X),)]  # ⬆️⬇️⬅️➡️ 
+joystick.pins = ((board.GP26, board.GP27, board.GP22, 270, 15),)
+joystick.map = [(( KC.W, KC.S, KC.A, KC.D, KC.LSHIFT, KC.X),)]  # ⬆️⬇️⬅️➡️ 
 
 keyboard.extensions = [display, MediaKeys(), Screen()]
-keyboard.modules = [joystick, encoder_handler, Macros(), Layers(), DesktopConnection(), HoldTap()]
+keyboard.modules = [joystick, encoder_handler, Macros(), Layers(), DesktopConnection()]
 
 ctrl_Shift_F5 = KC.MACRO(Press(KC.LCTL), Press(KC.LSFT), Tap(KC.F5), Release(KC.LSFT), Release(KC.LCTL))
 s = KC.MACRO("Wow, KMK is awesome!")
@@ -48,11 +46,11 @@ s = KC.MACRO("Wow, KMK is awesome!")
 keyboard.keymap = [
     [
         KC.N1, KC.N2, KC.N3, KC.N4, KC.N5,
-        KC.N6, KC.N7, KC.N8, KC.N9, KC.N9,
+        KC.N6, KC.N7, KC.N8, KC.N9, KC.N0,
     ],
     [
-        KC.get('F5'), KC.N2, KC.N3, KC.N4, KC.N5,
-        KC.LCTRL(KC.LSFT(KC.F5)), KC.N7, KC.N8, KC.N9, KC.N0,
+        KC.F5, KC.N2, KC.N3, KC.N4, KC.N5,
+        ctrl_Shift_F5, KC.N7, KC.N8, KC.N9, KC.N0,
     ]
 ]
 

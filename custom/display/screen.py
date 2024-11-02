@@ -1,7 +1,6 @@
-from kmk.keys import KC, Key, make_argumented_key, make_key
+from kmk.keys import Key, make_key
 from kmk.extensions import Extension
 from kmk.utils import Debug
-from kmk.extensions.display import Display
 
 debug = Debug(__name__)
 

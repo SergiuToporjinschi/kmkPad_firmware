@@ -1,22 +1,39 @@
 from kmk.utils import Debug
+from kmk.keys import KC, make_key
 from kmk.modules import Module
+from kmk.kmk_keyboard import KMKKeyboard
 import digitalio
 import analogio
 
 debug = Debug(__name__)
 
+
+#key position in map 
+class Joystick_key_position:
+    UP = 0
+    DOWN = 1
+    LEFT = 2
+    RIGHT = 3
+    RUN_MODIFIER = 4
+    BUTTON = 5
+
+
+
 class BaseJoystick:
-    def __init__(self):
+    def __init__(self, travel_segments):
         self._button_state = True
+        self._is_run = None
         self._button_held = None
         self._direction = None
         self.on_move_do = None
         self.on_button_do = None
+        self._travel_segments = travel_segments
 
     def get_state(self):
         return {
             'direction': self._direction,
             'is_pressed': not self._button_state,
+            'is_run': self._is_run,
         }
 
     def update_state(self):
@@ -30,14 +47,22 @@ class BaseJoystick:
         # if joystick is far DOWN Y value is between 0 and 5 (0, 5)
         # if joystick is far RIGHT X value is between 0 and 5 (5, 0)
         # b1=⬆️ 2=➡️ 3=⬇️ 4=⬅️ binary calculation first bit(from right to left) is up, second bit is right third bit is down fourth bit is left 
-        new_direction = ((self.pin_vry.get_value() < 0) << 3) | (self.pin_vrx.get_value() > 0) << 2 | ((self.pin_vry.get_value() > 0) << 1) | ((self.pin_vrx.get_value() < 0) << 0)
+        xValue = self.pin_vrx.get_value()
+        yValue = self.pin_vry.get_value()
+        new_direction = ((yValue < 0) << 3) | (xValue > 0) << 2 | ((yValue > 0) << 1) | ((xValue < 0) << 0)
+
         # Rotate binary values to match joystick orientation (0, 90, 180, or 270 degrees)
         new_direction = self.rotate(new_direction, self.rotation)
+        
+        #if is far UP or DOWN or LEFT or RIGHT then add mofidifier key
+        is_run = abs(yValue) == self._travel_segments or abs(xValue) == self._travel_segments
 
-        if new_direction != self._direction:
+        if new_direction != self._direction or is_run != self._is_run: 
             self._direction = new_direction
+            self._is_run = is_run
             if self.on_move_do is not None:
                 self.on_move_do(self.get_state())
+                
         # Button event
         self.button_event()
 
@@ -68,11 +93,12 @@ class GPIOJoystick(BaseJoystick):
         pin_vry,
         pin_button=None,
         rotation=0,
+        travel_segments=5,
         button_pull=digitalio.Pull.UP,
     ):
-        super().__init__()
-        self.pin_vrx = JoystickPin(pin_vrx)
-        self.pin_vry = JoystickPin(pin_vry)
+        super().__init__(travel_segments)
+        self.pin_vrx = JoystickPin(pin_vrx, travel_segments)
+        self.pin_vry = JoystickPin(pin_vry, travel_segments)
         self.rotation = rotation
 
         if pin_button:
@@ -85,7 +111,6 @@ class GPIOJoystick(BaseJoystick):
             self.rotation = 0
 
     def button_event(self):
-        # debug(f'Button event: {self.pin_button.get_value()}')
         if self.pin_button:
             new_button_state = self.pin_button.get_value()
             if new_button_state != self._button_state:
@@ -94,10 +119,11 @@ class GPIOJoystick(BaseJoystick):
                     self.on_button_do(self.get_state())
 
 class JoystickPin:
-    def __init__(self, pin, button_type=False, pull=digitalio.Pull.UP):
+    def __init__(self, pin, travel_segments=5, button_type=False, pull=digitalio.Pull.UP):
         self.pin = pin
         self.button_type = button_type
         self.pull = pull
+        self.travel_segments = travel_segments
         self.prepare_pin()
 
     def prepare_pin(self):
@@ -111,7 +137,6 @@ class JoystickPin:
                 self.io = self.pin
             else:
                 self.io = digitalio.DigitalInOut(self.pin)
-            # self.io.switch_to_input(pull=self.pull)
             self.io.direction = digitalio.Direction.INPUT
             self.io.pull = self.pull   
         else:
@@ -127,11 +152,10 @@ class JoystickPin:
             result = io.value
             if isinstance(self.pin, digitalio.DigitalInOut) and digitalio.Pull.UP != io.pull:
                 result = not result
-                # debug(f'Button value: {self.pin} {result}')
         return result
     
     def filter_dead_zone(self, value):
-        in_min, in_max, out_min, out_max = (400, 65000, -5, 5) # TODO: add calibration add 3.3v to ADC Ref pin ??!?! 
+        in_min, in_max, out_min, out_max = (400, 65000, -self.travel_segments, self.travel_segments) # TODO: add calibration add 3.3v to ADC Ref pin ??!?! 
         return int((value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min) if abs(value - 32768) > 500 else 0
 
 class JoystickHandler(Module): 
@@ -159,7 +183,7 @@ class JoystickHandler(Module):
                 except Exception as e:
                     print(e)
 
-    def on_move_do(self, keyboard, joystick_id, state):
+    def on_move_do(self, keyboard: KMKKeyboard, joystick_id, state):
         if self.map:
             layer_id = keyboard.active_layers[0]
             byte = state["direction"]
@@ -168,30 +192,38 @@ class JoystickHandler(Module):
             b3 = (byte >> 1) & 1 # 3=⬇️
             b4 = byte & 1        # 4=⬅️
             
-            if b1: # 1=⬆️
-                keyboard.add_key(self.map[layer_id][joystick_id][0])
+            keyMap = self.map[layer_id][joystick_id]
+            is_run = state['is_run']
+
+            if is_run:
+                keyboard.add_key(keyMap[Joystick_key_position.RUN_MODIFIER])
             else:
-                keyboard.remove_key(self.map[layer_id][joystick_id][0])
+                keyboard.remove_key(keyMap[Joystick_key_position.RUN_MODIFIER])
+
+            if b1: # 1=⬆️
+                keyboard.add_key(keyMap[Joystick_key_position.UP])
+            else:
+                keyboard.remove_key(keyMap[Joystick_key_position.UP])
             
             if b2: # 2=➡️
-                keyboard.add_key(self.map[layer_id][joystick_id][3])
+                keyboard.add_key(keyMap[Joystick_key_position.RIGHT])
             else:
-                keyboard.remove_key(self.map[layer_id][joystick_id][3]) 
+                keyboard.remove_key(keyMap[Joystick_key_position.RIGHT]) 
             
             if b3: # 3=⬇️
-                keyboard.add_key(self.map[layer_id][joystick_id][1])
+                keyboard.add_key(keyMap[Joystick_key_position.DOWN])
             else:
-                keyboard.remove_key(self.map[layer_id][joystick_id][1])
+                keyboard.remove_key(keyMap[Joystick_key_position.DOWN])
 
             if b4: # 4=⬅️
-                keyboard.add_key(self.map[layer_id][joystick_id][2])
+                keyboard.add_key(keyMap[Joystick_key_position.LEFT])
             else:
-                keyboard.remove_key(self.map[layer_id][joystick_id][2])
-    
+                keyboard.remove_key(keyMap[Joystick_key_position.LEFT])
+
     def on_button_do(self, keyboard, joystick_id, state):
         if state['is_pressed'] is True:
             layer_id = keyboard.active_layers[0]
-            key = self.map[layer_id][joystick_id][4]
+            key = self.map[layer_id][joystick_id][Joystick_key_position.BUTTON]
             keyboard.tap_key(key)
             
     def before_matrix_scan(self, keyboard):
