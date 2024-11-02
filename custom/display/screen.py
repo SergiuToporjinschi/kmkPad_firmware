@@ -78,8 +78,6 @@ class Screen(Extension):
                     break
         pass
     def before_matrix_scan(self, keyboard):
-        debug(f"Screen extension before matrix scan {keyboard.matrix_update5}")
-
         pass # raise NotImplementedError
 
     def after_matrix_scan(self, keyboard):
