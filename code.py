@@ -6,16 +6,14 @@ from kmk.keys import KC
 from kmk.scanners import DiodeOrientation
 from kmk.modules.encoder import EncoderHandler
 from kmk.modules.layers import Layers
-from kmk.extensions.display import Display
-from kmk.extensions.display import TextEntry
 from kmk.extensions.media_keys import MediaKeys
 from kmk.modules.macros import Press, Release, Tap
 from kmk.modules.macros import Macros
 
 from custom.module.desktop_connection import DesktopConnection
-from custom.display.sh1106_i2c import SH1106_I2C
+from custom.screen.sh1106_i2c import SH1106_I2C
 from custom.module.joystick_key_press import JoystickHandler  
-from custom.display.screen import Screen
+from custom.screen.screen import Screen
 
 keyboard = KMKKeyboard()
 keyboard.col_pins = (board.GP13, board.GP12, board.GP11, board.GP10, board.GP9)
@@ -23,11 +21,9 @@ keyboard.row_pins = (board.GP15, board.GP14)
 keyboard.diode_orientation = DiodeOrientation.ROW2COL
 keyboard.debug_enabled = True  
 
-ssd1306Inst = SH1106_I2C(busio.I2C(board.GP21, board.GP20))
-display = Display(
-    display=ssd1306Inst, width=128, height=64, entries=[], brightness=0.7,
-    dim_time=1 * 60, dim_target=0.10, brightness_step=0.05, off_time=5 * 60,
-    flip=False, #powersave_dim_time=2, powersave_dim_target=0.01, powersave_off_time=20
+display = Screen(display=SH1106_I2C(board.GP20, board.GP21), 
+    width=128, height=64, brightness=0.7, dim_time=1 * 60, dim_target=0.10, brightness_step=0.05, off_time=5 * 60,
+    flip=False
 )
 
 encoder_handler = EncoderHandler()
@@ -37,7 +33,7 @@ joystick = JoystickHandler()
 joystick.pins = ((board.GP26, board.GP27, board.GP22, 270, 15),)
 joystick.map = [(( KC.W, KC.S, KC.A, KC.D, KC.LSHIFT, KC.X),)]  # ⬆️⬇️⬅️➡️ 
 
-keyboard.extensions = [display, MediaKeys(), Screen()]
+keyboard.extensions = [display, MediaKeys()]
 keyboard.modules = [joystick, encoder_handler, Macros(), Layers(), DesktopConnection()]
 
 ctrl_Shift_F5 = KC.MACRO(Press(KC.LCTL), Press(KC.LSFT), Tap(KC.F5), Release(KC.LSFT), Release(KC.LCTL))
@@ -55,11 +51,6 @@ keyboard.keymap = [
 ]
 
 encoder_handler.map = [((KC.VOLU, KC.VOLD, KC.MUTE),)]
-
-display.entries = [
-    TextEntry(text="Basic", x=0, y=0, layer=0),
-    TextEntry(text="Row: 1", x=0, y=12),
-]
 
 if __name__ == '__main__':
     keyboard.go()

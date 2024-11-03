@@ -91,10 +91,6 @@ class SH1106(BusDisplay):
             data_as_commands=True,  # every byte will have a command byte preceeding
             brightness_command=0x81,
             single_byte_bounds=True,
-            # for sh1107 use column and page addressing.
-            #                lower column command = 0x00 - 0x0F
-            #                upper column command = 0x10 - 0x17
-            #                set page address     = 0xB0 - 0xBF (16 pages)
             SH1107_addressing=True,
         )
         self._is_awake = True  # Display starts in active state (_INIT_SEQUENCE)
