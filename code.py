@@ -26,7 +26,7 @@ keyboard.debug_enabled = True
 ssd1306Inst = SH1106_I2C(busio.I2C(board.GP21, board.GP20))
 display = Display(
     display=ssd1306Inst, width=128, height=64, entries=[], brightness=0.7,
-    dim_time=10, dim_target=0, brightness_step=0.05, off_time=00,
+    dim_time=1 * 60, dim_target=0.10, brightness_step=0.05, off_time=5 * 60,
     flip=False, #powersave_dim_time=2, powersave_dim_target=0.01, powersave_off_time=20
 )
 
