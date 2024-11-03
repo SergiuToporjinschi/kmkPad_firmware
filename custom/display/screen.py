@@ -3,7 +3,6 @@ from kmk.extensions import Extension
 from kmk.utils import Debug
 from kmk.extensions.display import Display
 from adafruit_display_text import label
-from adafruit_display_shapes.rect import Rect   
 from adafruit_display_shapes.line import Line
 from adafruit_bitmap_font import bitmap_font
 from custom.desktop_app.layer_descriptor import readLayerDescriptor

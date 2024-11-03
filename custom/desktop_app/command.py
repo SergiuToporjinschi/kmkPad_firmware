@@ -5,7 +5,7 @@ from adafruit_display_text import label
 
 from kmk.kmk_keyboard import KMKKeyboard
 from kmk.utils import Debug
-from kmk.keys import ALL_ALPHAS,ALL_NUMBER_ALIASES,ALL_NUMBERS
+from kmk.keys import ALL_ALPHAS,ALL_NUMBERS
 from kmk.scanners import DiodeOrientation
 # from .layer_descriptor import readLayerDescriptor
 from custom.desktop_app.layer_descriptor import readLayerDescriptor

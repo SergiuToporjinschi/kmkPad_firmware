@@ -1,5 +1,4 @@
 from kmk.utils import Debug
-from kmk.keys import KC, make_key
 from kmk.modules import Module
 from kmk.kmk_keyboard import KMKKeyboard
 import digitalio
