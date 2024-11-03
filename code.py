@@ -46,11 +46,11 @@ s = KC.MACRO("Wow, KMK is awesome!")
 keyboard.keymap = [
     [
         KC.N1, KC.N2, KC.N3, KC.N4, KC.N5,
-        KC.N6, KC.N7, KC.DIS_BRI, KC.DIS_BRD, KC.SK_LINE,
+        KC.FD(1), KC.N7, KC.DIS_BRI, KC.SK_INF1, KC.SK_INF2,
     ],
     [
         KC.F5, KC.N2, KC.N3, KC.N4, KC.N5,
-        ctrl_Shift_F5, KC.N7, KC.N8, KC.N9, KC.N0,
+        KC.FD(0), KC.A, KC.N8, KC.N9, KC.N0,
     ]
 ]
 
