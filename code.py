@@ -47,9 +47,6 @@ joystick.map = [(( KC.W, KC.S, KC.A, KC.D, KC.LSHIFT, KC.X),)]  # ⬆️⬇️�
 keyboard.extensions = [display, MediaKeys()]
 keyboard.modules = [joystick, encoder_handler, Macros(), Layers(), DesktopConnection()]
 
-# ctrl_Shift_F5 = KC.MACRO(Press(KC.LCTL), Press(KC.LSFT), Tap(KC.F5), Release(KC.LSFT), Release(KC.LCTL))
-# s = KC.MACRO("Wow, KMK is awesome!")
-
 # keyMaps = [
 keyMaps = [
     # [
@@ -73,10 +70,8 @@ keyMaps = [
 keyboard.active_layers = list(range(len(keyMaps)))
 keyboard.keymap = keyMaps
 
-# print(f'{keyboard.active_layers}')
-
-encoder_handler.map = config.layers_encoders_maps
-# encoder_handler.map = [[[ KC.TGS('DOWN'), KC.TGS('UP'), KC.MUTE]],[[KC.TGS('DOWN'), KC.TGS('UP'), KC.TRNS]],[[KC.TGS('DOWN'), KC.TGS('UP'), KC.TRNS]]]
+# encoder_handler.map = config.layers_encoders_maps
+encoder_handler.map = [[[ KC.TGS('DOWN'), KC.TGS('UP'), KC.MUTE]],[[KC.TGS('DOWN'), KC.TGS('UP'), KC.TRNS]],[[KC.TGS('DOWN'), KC.TGS('UP'), KC.TRNS]]]
 
 
 if __name__ == '__main__':
