@@ -4,7 +4,8 @@ from kmk.kmk_keyboard import KMKKeyboard
 from kmk.keys import KC
 from kmk.scanners import DiodeOrientation
 from kmk.modules.encoder import EncoderHandler
-from kmk.modules.layers import Layers
+# from kmk.modules.layers import Layers
+from custom.module.layers import Layers
 from kmk.extensions.media_keys import MediaKeys
 from kmk.modules.macros import Press, Release, Tap
 from kmk.modules.macros import Macros
@@ -37,20 +38,19 @@ display = Screen(display=SH1106_I2C(board.GP20, board.GP21),
 )
 
 encoder_handler = EncoderHandler()
-encoder_handler.pins = ((board.GP16, board.GP17,  board.GP18, config.encoder_reversed, 2),)
+encoder_handler.pins = ((board.GP3, board.GP4,  board.GP5, config.encoder_reversed, config.encoder_divisor),)
 
 joystick = JoystickHandler()
-joystick.pins = ((board.GP26, board.GP27, board.GP22, 270, 15),)
+joystick.pins = ((board.GP26, board.GP27, board.GP28, 270, 15),)
 joystick.map = [(( KC.W, KC.S, KC.A, KC.D, KC.LSHIFT, KC.X),)]  # ⬆️⬇️⬅️➡️ 
-
-keyboard.extensions = [ MediaKeys()]
-keyboard.modules = [ Macros(), Layers()]
 
 keyboard.extensions = [display, MediaKeys()]
 keyboard.modules = [joystick, encoder_handler, Macros(), Layers(), DesktopConnection()]
-ctrl_Shift_F5 = KC.MACRO(Press(KC.LCTL), Press(KC.LSFT), Tap(KC.F5), Release(KC.LSFT), Release(KC.LCTL))
-s = KC.MACRO("Wow, KMK is awesome!")
 
+# ctrl_Shift_F5 = KC.MACRO(Press(KC.LCTL), Press(KC.LSFT), Tap(KC.F5), Release(KC.LSFT), Release(KC.LCTL))
+# s = KC.MACRO("Wow, KMK is awesome!")
+
+# keyMaps = [
 keyMaps = [
     # [
     #     KC.TG(1), KC.N2, KC.N3, KC.N4, KC.N5,
@@ -62,20 +62,21 @@ keyMaps = [
     ],
     [
         KC.TGS('UP'), KC.N2, KC.N3, KC.N4, KC.TRNS,
-        KC.FD(0), KC.A, KC.N8, KC.N9, KC.N1,
+        KC.F, KC.A, KC.N8, KC.N9, KC.N1,
     ],
     [
         KC.TGS('UP'), KC.N2, KC.N3, KC.N4, KC.TRNS,
-        KC.FD(0), KC.A, KC.N8, KC.N9, KC.N2,
+        KC.D, KC.A, KC.N8, KC.N9, KC.N2,
     ]
 ] + config.layers_key_maps
 
-# keyboard.keymap = keyMaps
-# keyboard.active_layers = [0,1, 2]
+keyboard.active_layers = list(range(len(keyMaps)))
+keyboard.keymap = keyMaps
+
 # print(f'{keyboard.active_layers}')
 
-# encoder_handler.map = config.layers_encoders_mapsbbbbbbbbbbb0000bbbb00bb00bbbb0bb000
-encoder_handler.map = [[[ KC.TGS('DOWN'), KC.TGS('UP'), KC.MUTE]],[[KC.TGS('DOWN'), KC.TGS('UP'), KC.TRNS]],[[KC.TGS('DOWN'), KC.TGS('UP'), KC.TRNS]]]
+encoder_handler.map = config.layers_encoders_maps
+# encoder_handler.map = [[[ KC.TGS('DOWN'), KC.TGS('UP'), KC.MUTE]],[[KC.TGS('DOWN'), KC.TGS('UP'), KC.TRNS]],[[KC.TGS('DOWN'), KC.TGS('UP'), KC.TRNS]]]
 
 
 if __name__ == '__main__':

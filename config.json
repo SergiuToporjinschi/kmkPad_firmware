@@ -1,5 +1,6 @@
 {
     "screen": {
+        "enabled": true,
         "brightness": 0.7,
         "brightnessStep": 0.05,
         "dimTimeout": 60,
@@ -13,40 +14,40 @@
                 "name": "First",
                 "index" : 0,
                 "active": true,
-                "map": ["A", "w", "e", "r", "t", "N1","N2","N3","N4","N5"]
+                "map": ["TRNS", "w", "e", "r", "t", "N1","N2","N3","N4","N5"]
             },
             {
                 "name":"Second",
                 "index" : 1,
                 "active": true,
                 "app" : "notepad++",
-                "map":  ["N1","N2","N3","N4","N5", "Q", "w", "e", "r", "t"]
+                "map":  ["TRNS","N2","N3","N4","N5", "Q", "w", "e", "r", "t"]
             },{
                 "name":"Another",
                 "index" : 2,
                 "active": true,
                 "app" : "notepad++",
-                "map":  ["X","Y","U","I","T", "O", "w", "e", "r", "t"]
+                "map":  ["TRNS","Y","U","I","T", "O", "w", "e", "r", "t"]
             },{
                 "name":"Third",
                 "index" : 3,
                 "active": true,
                 "app" : "notepad++",
-                "map":  ["A","B","C","D","E", "F", "G", "H", "I", "J"]
+                "map":  ["TRNS","B","C","D","E", "F", "G", "H", "I", "J"]
            }
         ]
     },
     "encoders": [
         {
             "reversed": false,
-            "divisor": 1,
+            "divisor": 2,
             "layers": [
                 {
                     "name": "Second",
                     "index": 0,
                     "active": true,
                     "app": "notepad++",
-                    "map": [ "VOLU", "VOLD", "MUTE"]
+                    "map": [ "VOLD", "VOLU", "MUTE"]
                 }
             ]
         }

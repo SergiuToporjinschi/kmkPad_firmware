@@ -34,6 +34,9 @@ class ConfigHandler:
     def _read_config(self):
         with open('/config.json') as f:
             return json.load(f)
+    @property   
+    def screen_enabled(self) -> bool:
+        return self.config['screen']['enabled']
 
     @property
     def screen_brightness(self) -> float:

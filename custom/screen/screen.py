@@ -37,7 +37,6 @@ class Screen(Display):
         self._create_keys()
         self._bild_screen()
         self._config = ConfigHandler()
-        # self._layer_descriptor = readLayerDescriptor()
 
     def _create_keys(self):
         make_argumented_key(
@@ -78,7 +77,7 @@ class Screen(Display):
         self._screen_group.append(Line(0, 32, 128, 32, 0xFFFFFF))
         self._screen_group.append(self._info_line_1)
         self._screen_group.append(self._info_line_2)
-        
+
 
     def on_runtime_enable(self, keyboard):
         super().on_runtime_enable(keyboard)
@@ -93,13 +92,13 @@ class Screen(Display):
 
     def before_matrix_scan(self, keyboard):
         super().before_matrix_scan(keyboard)
-        # if self.display is not None and self.display.root_group != self._screen_group:
-        #     self.display.root_group = self._screen_group
+        if self.display is not None and self.display.root_group != self._screen_group:
+            self.display.root_group = self._screen_group
         
-        # if self._current_layer != keyboard.active_layers[0]:
-        #     self._current_layer = keyboard.active_layers[0]
-        #     layer_config = self._config.layers_get_by_index(self._current_layer)
-        #     self._layer_value.text = layer_config['name']
+        if self._current_layer != keyboard.active_layers[0]:
+            self._current_layer = keyboard.active_layers[0]
+            layer_config = self._config.layers_get_by_index(self._current_layer)
+            self._layer_value.text = layer_config['name']
 
     def after_matrix_scan(self, keyboard): super().after_matrix_scan(keyboard)
     def before_hid_send(self, keyboard): pass
