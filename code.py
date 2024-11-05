@@ -1,5 +1,4 @@
 import board 
-import busio
 
 from kmk.kmk_keyboard import KMKKeyboard
 from kmk.keys import KC
@@ -14,43 +13,70 @@ from custom.module.desktop_connection import DesktopConnection
 from custom.screen.sh1106_i2c import SH1106_I2C
 from custom.module.joystick_key_press import JoystickHandler  
 from custom.screen.screen import Screen
+from custom.desktop_app.config import ConfigHandler
+
+
 
 keyboard = KMKKeyboard()
 keyboard.col_pins = (board.GP13, board.GP12, board.GP11, board.GP10, board.GP9)
 keyboard.row_pins = (board.GP15, board.GP14)
 keyboard.diode_orientation = DiodeOrientation.ROW2COL
-keyboard.debug_enabled = True  
+keyboard.debug_enabled = True
+
+config = ConfigHandler(len(keyboard.col_pins) * len(keyboard.row_pins))
+config.load_config()
 
 display = Screen(display=SH1106_I2C(board.GP20, board.GP21), 
-    width=128, height=64, brightness=0.7, dim_time=1 * 60, dim_target=0.10, brightness_step=0.05, off_time=5 * 60,
-    flip=False
+    width=128, height=64, 
+    brightness=config.screen_brightness, 
+    dim_time=config.screen_dim_timeout, 
+    dim_target=config.screen_dim_target, 
+    brightness_step=config.screen_brightness_step, 
+    off_time=config.screen_off_time,
+    flip=config.screen_flip
 )
 
 encoder_handler = EncoderHandler()
-encoder_handler.pins = ((board.GP17, board.GP16, board.GP18, False, 1),)
+encoder_handler.pins = ((board.GP16, board.GP17,  board.GP18, config.encoder_reversed, 2),)
 
 joystick = JoystickHandler()
 joystick.pins = ((board.GP26, board.GP27, board.GP22, 270, 15),)
 joystick.map = [(( KC.W, KC.S, KC.A, KC.D, KC.LSHIFT, KC.X),)]  # ⬆️⬇️⬅️➡️ 
 
+keyboard.extensions = [ MediaKeys()]
+keyboard.modules = [ Macros(), Layers()]
+
 keyboard.extensions = [display, MediaKeys()]
 keyboard.modules = [joystick, encoder_handler, Macros(), Layers(), DesktopConnection()]
-
 ctrl_Shift_F5 = KC.MACRO(Press(KC.LCTL), Press(KC.LSFT), Tap(KC.F5), Release(KC.LSFT), Release(KC.LCTL))
 s = KC.MACRO("Wow, KMK is awesome!")
 
-keyboard.keymap = [
+keyMaps = [
+    # [
+    #     KC.TG(1), KC.N2, KC.N3, KC.N4, KC.N5,
+    #     KC.F8, KC.F9, KC.LSHIFT(KC.F8), KC.F7, KC.F8,
+    # ],
     [
-        KC.N1, KC.N2, KC.N3, KC.N4, KC.N5,
-        KC.FD(1), KC.N7, KC.DIS_BRI, KC.SK_INF1, KC.SK_INF2,
+        KC.TGS('UP'), KC.N2, KC.N3, KC.N4, KC.N5,
+        KC.A, KC.B, KC.LSHIFT(KC.F8), KC.F7, KC.N0,
     ],
     [
-        KC.F5, KC.N2, KC.N3, KC.N4, KC.N5,
-        KC.FD(0), KC.A, KC.N8, KC.N9, KC.N0,
+        KC.TGS('UP'), KC.N2, KC.N3, KC.N4, KC.TRNS,
+        KC.FD(0), KC.A, KC.N8, KC.N9, KC.N1,
+    ],
+    [
+        KC.TGS('UP'), KC.N2, KC.N3, KC.N4, KC.TRNS,
+        KC.FD(0), KC.A, KC.N8, KC.N9, KC.N2,
     ]
-]
+] + config.layers_key_maps
 
-encoder_handler.map = [((KC.VOLU, KC.VOLD, KC.MUTE),)]
+# keyboard.keymap = keyMaps
+# keyboard.active_layers = [0,1, 2]
+# print(f'{keyboard.active_layers}')
+
+# encoder_handler.map = config.layers_encoders_mapsbbbbbbbbbbb0000bbbb00bb00bbbb0bb000
+encoder_handler.map = [[[ KC.TGS('DOWN'), KC.TGS('UP'), KC.MUTE]],[[KC.TGS('DOWN'), KC.TGS('UP'), KC.TRNS]],[[KC.TGS('DOWN'), KC.TGS('UP'), KC.TRNS]]]
+
 
 if __name__ == '__main__':
     keyboard.go()

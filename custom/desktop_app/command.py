@@ -8,7 +8,7 @@ from kmk.utils import Debug
 from kmk.keys import ALL_ALPHAS,ALL_NUMBERS
 from kmk.scanners import DiodeOrientation
 # from .layer_descriptor import readLayerDescriptor
-from custom.desktop_app.layer_descriptor import readLayerDescriptor
+# from custom.desktop_app.layer_descriptor import readLayerDescriptor
 
 debug = Debug(__name__)
 
