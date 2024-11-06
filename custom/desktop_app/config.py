@@ -36,10 +36,12 @@ class ConfigHandler:
             with open('/config.json') as f:
                 return json.load(f)
         except FileNotFoundError:
-            debug('Config file not found')
+            if debug.enabled:
+                debug('Config file not found')
             return {}
         except json.JSONDecodeError:
-            debug('Error decoding config file')
+            if debug.enabled:
+                debug('Error decoding config file')
             return {}
         
     @property
@@ -159,7 +161,6 @@ class ConfigHandler:
                 enc_layers[i] = [[KC.TRNS, KC.TRNS, KC.TRNS]]
         
         self._encoder_layers = enc_layers
-        debug('Encoder layers:', enc_layers)
         return enc_layers
 
     @property   
@@ -180,7 +181,6 @@ class ConfigHandler:
                 key = self._build_key(key_map[i])
                 ret_key_map.append(key)
             else:
-                debug('AddedKey')
                 ret_key_map.append(KC.NO)
         return ret_key_map
     
