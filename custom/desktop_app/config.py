@@ -1,4 +1,5 @@
 import json
+import board 
 from kmk.keys import KC
 from kmk.utils import Debug
 from kmk.keys import KeyboardKey, ConsumerKey, Key
@@ -7,42 +8,23 @@ debug = Debug(__name__)
 config = None
 
 class ConfigHandler:
-    _instance = None
-    _keyboard_layers = None
     _nr_keyboard_layers = None
-    _encoder_layers = None  
-    _joystickKey_layers = None  
-
-    def __new__(cls, *args, **kwargs):
-        if not cls._instance:
-            cls._instance = super(ConfigHandler, cls).__new__(cls)
-        
-        global config
-        config = cls._instance
-        return cls._instance
-
-    def __init__(self, no_of_keys: int = None):
-        if not hasattr(self, 'initialized'):
-            self._no_of_keys = no_of_keys
-            self.initialized = True
+    _no_of_keys = None
     
-    def load_config(self):
-        self.config = self._read_config()
-        if debug.enabled:
-            debug('Config loaded')
-
-    def _read_config(self):
+    def __init__(self):
         try:
             with open('/config.json') as f:
-                return json.load(f)
+                self.config = json.load(f)
         except FileNotFoundError:
             if debug.enabled:
                 debug('Config file not found')
-            return {}
+            self.config = {}
         except json.JSONDecodeError:
             if debug.enabled:
                 debug('Error decoding config file')
-            return {}
+            self.config = {}
+        if debug.enabled:
+            debug('Config loaded')
         
     @property
     def debug_enabled(self) -> bool:
@@ -55,6 +37,27 @@ class ConfigHandler:
     @property
     def version(self) -> str:
         return self.config['version']
+    
+    #----------------------------------------------------keyboard
+    @property
+    def keyboard_GPIO_pin_rows(self) -> tuple:
+        rowPins = self._build_gpios(self.config['keyboard']['gpioPinRows'])
+        self._no_of_keys = len(rowPins) * len(self.config['keyboard']['gpioPinCols'])
+        return rowPins
+
+    @property
+    def keyboard_GPIO_pin_cols(self) -> tuple:
+        colPins = self._build_gpios(self.config['keyboard']['gpioPinCols'])
+        self._no_of_keys = len(colPins) * len(self.config['keyboard']['gpioPinRows'])
+        return colPins
+
+    @property
+    def keyboard_diode_orientation(self) -> int: 
+        ''' 
+        1 = DiodeOrientation.ROW2COL = ROWS; 
+        0 = DiodeOrientation.COL2ROW = COLUMNS 
+        '''
+        return self.config['keyboard']['diodeOrientation']
     
     #----------------------------------------------------screen
     @property   
@@ -95,6 +98,18 @@ class ConfigHandler:
    
     #----------------------------------------------------encoder
     @property
+    def encoder_GPIO_pins(self) -> tuple:
+        return self._build_gpios(self.config['encoders'][0]['gpioPins'])
+    
+    def _build_gpios(self, gpio_pins: list) -> tuple:
+        outPut = ()
+        for boarGPIO in gpio_pins:
+            gpio = {}
+            exec(f'gpio = board.{boarGPIO}', {'board': board}, gpio)
+            outPut += (gpio.get('gpio'),)
+        return outPut
+
+    @property
     def encoder_enabled(self) -> int:
         return self.config['encoders'][0]['enabled']
 
@@ -108,16 +123,20 @@ class ConfigHandler:
 
     #----------------------------------------------------joystick
     @property
-    def joystick_enabled(self) -> bool:
+    def joystickKey_enabled(self) -> bool:
         return self.config['joystickKeys'][0]['enabled']
     
     @property
-    def joystick_rotation(self) -> list:    
+    def joystickKey_rotation(self) -> list:    
         return self.config['joystickKeys'][0]['rotation']
     
     @property
-    def joystick_travel_segments(self) -> list:
+    def joystickKey_travel_segments(self) -> list:
         return self.config['joystickKeys'][0]['travelSegments']
+    
+    @property
+    def joystickKey_GPIO_pins(self) -> tuple:
+        return self._build_gpios(self.config['joystickKeys'][0]['gpioPins'])
 
     #----------------------------------------------------layers
     def layers_get_by_index(self, index: int) -> dict:
@@ -136,22 +155,15 @@ class ConfigHandler:
 
     @property
     def layers_key_maps(self) -> list:
-        if self._keyboard_layers is not None:
-            return self._keyboard_layers
-        
         ret_layers = [None] * len(self.config['keyboard']['layers'])
         for layer in self.config['keyboard']['layers']:
             ret_layers[layer['index']] = self._build_key_map(layer['map'], self._no_of_keys)
 
-        self._keyboard_layers = ret_layers
         self._nr_keyboard_layers = len(ret_layers)
         return ret_layers
     
     @property
     def layers_encoders_maps(self) -> list:
-        if self._encoder_layers is not None:
-            return self._encoder_layers
-        
         enc_layers =  [None] * self._nr_keyboard_layers
         for i in range(self._nr_keyboard_layers):
             layer = self._find_layer_by_index(self.config['encoders'][0]['layers'], i)
@@ -160,19 +172,18 @@ class ConfigHandler:
             else:
                 enc_layers[i] = [[KC.TRNS, KC.TRNS, KC.TRNS]]
         
-        self._encoder_layers = enc_layers
         return enc_layers
 
     @property   
-    def layers_joystick_keys_maps(self) -> list:
-        self._joystickKey_layers =  [None] * self._nr_keyboard_layers
+    def layers_joystickKeys_maps(self) -> list:
+        _joystickKey_layers =  [None] * self._nr_keyboard_layers
         for i in range(self._nr_keyboard_layers):
             layer = self._find_layer_by_index(self.config['joystickKeys'][0]['layers'], i)
             if layer is not None:
-                self._joystickKey_layers[i] = self._build_key_map(layer['map'], 6)
+                _joystickKey_layers[i] = [self._build_key_map(layer['map'], 6)]
             else:
-                self._joystickKey_layers[i] = [KC.TRNS, KC.TRNS, KC.TRNS, KC.TRNS, KC.TRNS, KC.TRNS]
-        pass
+                _joystickKey_layers[i] = [[KC.TRNS, KC.TRNS, KC.TRNS, KC.TRNS, KC.TRNS, KC.TRNS]]
+        return _joystickKey_layers
 
     def _build_key_map(self, key_map: list, no_of_keys: int):
         ret_key_map = [] 
