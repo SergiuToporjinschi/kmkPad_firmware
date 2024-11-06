@@ -1,6 +1,9 @@
 {
+    "debug" : true,
     "screen": {
         "enabled": true,
+        "width": 128,
+        "height": 64,
         "brightness": 0.7,
         "brightnessStep": 0.05,
         "dimTimeout": 60,
@@ -39,8 +42,25 @@
     },
     "encoders": [
         {
+            "enabled": true,
             "reversed": false,
             "divisor": 2,
+            "layers": [
+                {
+                    "name": "Second",
+                    "index": 0,
+                    "active": true,
+                    "app": "notepad++",
+                    "map": [ "VOLD", "VOLU", "MUTE"]
+                }
+            ]
+        }
+    ],
+    "joystickKeys": [
+        {
+            "enabled": true,
+            "rotation": 270,
+            "travelSegments": 15,
             "layers": [
                 {
                     "name": "Second",

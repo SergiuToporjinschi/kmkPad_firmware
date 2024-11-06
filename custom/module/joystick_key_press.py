@@ -18,7 +18,7 @@ class Joystick_key_position:
 
 
 
-class BaseJoystick:
+class BaseJoystickKey:
     def __init__(self, travel_segments):
         self._button_state = True
         self._is_run = None
@@ -85,7 +85,7 @@ class BaseJoystick:
         # Ensure we stay within 4 bits by masking any overflow
         return binary_value & 0b1111  # Mask with 0b1111 to keep only the lowest 4 bits
 
-class GPIOJoystick(BaseJoystick):
+class GPIOJoystickKey(BaseJoystickKey):
     def __init__(
         self,
         pin_vrx,
@@ -96,12 +96,12 @@ class GPIOJoystick(BaseJoystick):
         button_pull=digitalio.Pull.UP,
     ):
         super().__init__(travel_segments)
-        self.pin_vrx = JoystickPin(pin_vrx, travel_segments)
-        self.pin_vry = JoystickPin(pin_vry, travel_segments)
+        self.pin_vrx = JoystickKeyPin(pin_vrx, travel_segments)
+        self.pin_vry = JoystickKeyPin(pin_vry, travel_segments)
         self.rotation = rotation
 
         if pin_button:
-            self.pin_button = JoystickPin(pin_button, button_type=True, pull=button_pull)
+            self.pin_button = JoystickKeyPin(pin_button, button_type=True, pull=button_pull)
         else:
             self.pin_button = None
 
@@ -117,7 +117,7 @@ class GPIOJoystick(BaseJoystick):
                 if self.on_button_do is not None:
                     self.on_button_do(self.get_state())
 
-class JoystickPin:
+class JoystickKeyPin:
     def __init__(self, pin, travel_segments=5, button_type=False, pull=digitalio.Pull.UP):
         self.pin = pin
         self.button_type = button_type
@@ -157,7 +157,7 @@ class JoystickPin:
         in_min, in_max, out_min, out_max = (400, 65000, -self.travel_segments, self.travel_segments) # TODO: add calibration add 3.3v to ADC Ref pin ??!?! 
         return int((value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min) if abs(value - 32768) > 500 else 0
 
-class JoystickHandler(Module): 
+class JoystickKeyHandler(Module): 
     def __init__(self):
         self.joysticks = []
         self.pins = None
@@ -168,7 +168,7 @@ class JoystickHandler(Module):
             for idx, jConfig in enumerate(self.pins):
                 # debug(f'Joystick {idx} configured with {jConfig}')
                 try:
-                    new_joystick = GPIOJoystick(*jConfig)
+                    new_joystick = GPIOJoystickKey(*jConfig)
 
                     new_joystick.on_move_do = lambda x, bound_idx=idx: self.on_move_do(
                         keyboard, bound_idx, x
@@ -180,7 +180,7 @@ class JoystickHandler(Module):
                     )
                     self.joysticks.append(new_joystick)
                 except Exception as e:
-                    print(e)
+                    print(f"Error configuring joystick {idx}: {e}")
 
     def on_move_do(self, keyboard: KMKKeyboard, joystick_id, state):
         if self.map:

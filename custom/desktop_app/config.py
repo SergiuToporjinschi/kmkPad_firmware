@@ -12,7 +12,6 @@ class ConfigHandler:
     _nr_keyboard_layers = None
     _encoder_layers = None  
 
-    
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
             cls._instance = super(ConfigHandler, cls).__new__(cls)
@@ -32,11 +31,32 @@ class ConfigHandler:
             debug('Config loaded')
 
     def _read_config(self):
-        with open('/config.json') as f:
-            return json.load(f)
+        try:
+            with open('/config.json') as f:
+                return json.load(f)
+        except FileNotFoundError:
+            debug('Config file not found')
+            return {}
+        except json.JSONDecodeError:
+            debug('Error decoding config file')
+            return {}
+        
+    @property
+    def debug_enabled(self) -> bool:
+        return self.config.get('debug', False)
+    
+    #----------------------------------------------------screen
     @property   
     def screen_enabled(self) -> bool:
         return self.config['screen']['enabled']
+
+    @property
+    def screen_width(self) -> int:
+        return self.config['screen']['width']
+    
+    @property
+    def screen_height(self) -> int:
+        return self.config['screen']['height']
 
     @property
     def screen_brightness(self) -> float:
@@ -62,6 +82,11 @@ class ConfigHandler:
     def screen_off_time(self) -> int:
         return self.config['screen']['offTime']
     
+    #----------------------------------------------------encoder
+    @property
+    def encoder_enabled(self) -> int:
+        return self.config['encoders'][0]['enabled']
+
     @property
     def encoder_reversed(self) -> bool:
         return self.config['encoders'][0]['reversed']
@@ -70,6 +95,20 @@ class ConfigHandler:
     def encoder_divisor(self) -> int:
         return self.config['encoders'][0]['divisor']
 
+    #----------------------------------------------------joystick
+    @property
+    def joystick_enabled(self) -> bool:
+        return self.config['joystickKeys'][0]['enabled']
+    
+    @property
+    def joystick_rotation(self) -> list:    
+        return self.config['joystickKeys'][0]['rotation']
+    
+    @property
+    def joystick_travel_segments(self) -> list:
+        return self.config['joystickKeys'][0]['travelSegments']
+
+    #----------------------------------------------------layers
     def layers_get_by_index(self, index: int) -> dict:
         for layer in self.config['keyboard']['layers']:
             if layer['index'] == index:
@@ -94,7 +133,6 @@ class ConfigHandler:
         if self._encoder_layers is not None:
             return self._encoder_layers
         
-        # for encoder in self.config['encoders']:
         enc_layers =  [None] * self._nr_keyboard_layers
         for i in range(self._nr_keyboard_layers):
             layer = self._find_layer_by_index(self.config['encoders'][0]['layers'], i)
@@ -106,8 +144,8 @@ class ConfigHandler:
         self._encoder_layers = enc_layers
         debug('Encoder layers:', enc_layers)
         return enc_layers
-    # [[[]],[[]]]
-    def _build_key_map(self, key_map: list, no_of_keys: int): #TODO: add support for parameter keys
+
+    def _build_key_map(self, key_map: list, no_of_keys: int):
         ret_key_map = [] 
         for i in range(no_of_keys):
             if i < len(key_map):
