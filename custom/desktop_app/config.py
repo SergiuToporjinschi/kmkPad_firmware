@@ -1,7 +1,7 @@
 import json
 from kmk.keys import KC
 from kmk.utils import Debug
-
+from kmk.keys import KeyboardKey, ConsumerKey, Key
 debug = Debug(__name__)
 
 config = None
@@ -11,6 +11,7 @@ class ConfigHandler:
     _keyboard_layers = None
     _nr_keyboard_layers = None
     _encoder_layers = None  
+    _joystickKey_layers = None  
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
@@ -44,6 +45,14 @@ class ConfigHandler:
     @property
     def debug_enabled(self) -> bool:
         return self.config.get('debug', False)
+    
+    @property
+    def title(self) -> str:
+        return self.config['title']
+
+    @property
+    def version(self) -> str:
+        return self.config['version']
     
     #----------------------------------------------------screen
     @property   
@@ -81,7 +90,7 @@ class ConfigHandler:
     @property
     def screen_off_time(self) -> int:
         return self.config['screen']['offTime']
-    
+   
     #----------------------------------------------------encoder
     @property
     def encoder_enabled(self) -> int:
@@ -116,6 +125,14 @@ class ConfigHandler:
         return None
 
     @property
+    def media_keys_enabled(self) -> bool:
+        return True
+
+    @property
+    def macro_keys_enabled(self) -> bool:
+        return True
+
+    @property
     def layers_key_maps(self) -> list:
         if self._keyboard_layers is not None:
             return self._keyboard_layers
@@ -145,15 +162,40 @@ class ConfigHandler:
         debug('Encoder layers:', enc_layers)
         return enc_layers
 
+    @property   
+    def layers_joystick_keys_maps(self) -> list:
+        self._joystickKey_layers =  [None] * self._nr_keyboard_layers
+        for i in range(self._nr_keyboard_layers):
+            layer = self._find_layer_by_index(self.config['joystickKeys'][0]['layers'], i)
+            if layer is not None:
+                self._joystickKey_layers[i] = self._build_key_map(layer['map'], 6)
+            else:
+                self._joystickKey_layers[i] = [KC.TRNS, KC.TRNS, KC.TRNS, KC.TRNS, KC.TRNS, KC.TRNS]
+        pass
+
     def _build_key_map(self, key_map: list, no_of_keys: int):
         ret_key_map = [] 
         for i in range(no_of_keys):
             if i < len(key_map):
-                ret_key_map.append(KC.get(key_map[i], "NO"))
+                key = self._build_key(key_map[i])
+                ret_key_map.append(key)
             else:
+                debug('AddedKey')
                 ret_key_map.append(KC.NO)
         return ret_key_map
     
+    def _build_key(self, keyString : str) -> KeyboardKey:
+        local_vars = {}
+        global_vars = {
+            'KC': KC,
+        }
+        exec(f'key = {keyString}', global_vars, local_vars) # I don't like this but is the only way to get the key object from a string
+        key = local_vars.get('key')
+        if isinstance(key, (KeyboardKey, ConsumerKey, Key)):
+            return key
+
+        return KC.NO
+
     def _find_layer_by_index(self, layers: list, index: int) -> dict:
         for layer in layers:
             if layer['index'] == index:

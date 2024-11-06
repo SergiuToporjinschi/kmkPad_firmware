@@ -34,9 +34,9 @@ class Screen(Display):
         super().__init__(*args, **kwargs)
         debug("Screen extension initialized")
         self._lastLayer = None
+        self._config = ConfigHandler()
         self._create_keys()
         self._bild_screen()
-        self._config = ConfigHandler()
 
     def _create_keys(self):
         make_argumented_key(
@@ -60,19 +60,19 @@ class Screen(Display):
 
 
     def _bild_screen(self):
-        self._name_title = label.Label(Font.GetFont(Font.ArialBold15), text="DEV Pad", color=0xFFFFFF, x=0, y=5, anchor_point=(0.0, 0.0)) #TODO get value from config 
-        self._name_title_version = label.Label(Font.GetFont(Font.ArialBold8), text="V 0.01", color=0xFFFFFF, x=0, y=24, anchor_point=(0.0, 0.0)) #TODO get value from config
-        self._layer_label = label.Label(Font.GetFont(Font.ArialBold15), text="Layer", color=0xFFFFFF, x=75, y=5, anchor_point=(0.0, 0.0))
+        _name_title = label.Label(Font.GetFont(Font.ArialBold15), text=self._config.title, color=0xFFFFFF, x=0, y=5, anchor_point=(0.0, 0.0))
+        _name_title_version = label.Label(Font.GetFont(Font.ArialBold8), text=self._config.version, color=0xFFFFFF, x=0, y=24, anchor_point=(0.0, 0.0))
+        _layer_label = label.Label(Font.GetFont(Font.ArialBold15), text="Layer", color=0xFFFFFF, x=75, y=5, anchor_point=(0.0, 0.0))
         self._layer_value = label.Label(Font.GetFont(Font.ArialBold10), text=" "*7, color=0xFFFFFF, x=75, y=24, anchor_point=(0.0, 0.0))
         
         self._info_line_1 = label.Label(Font.GetFont(Font.ArialBold10), text=" "*20, color=0xFFFFFF, x=0, y=44, anchor_point=(0.0, 0.0))
         self._info_line_2 = label.Label(Font.GetFont(Font.ArialBold10), text=" "*20, color=0xFFFFFF, x=0, y=56, anchor_point=(0.0, 0.0))
 
         self._screen_group = displayio.Group()
-        self._screen_group.append(self._name_title)
-        self._screen_group.append(self._name_title_version)
+        self._screen_group.append(_name_title)
+        self._screen_group.append(_name_title_version)
         self._screen_group.append(Line(70, 0, 70, 32, 0xFFFFFF))
-        self._screen_group.append(self._layer_label)
+        self._screen_group.append(_layer_label)
         self._screen_group.append(self._layer_value)
         self._screen_group.append(Line(0, 32, 128, 32, 0xFFFFFF))
         self._screen_group.append(self._info_line_1)
@@ -89,12 +89,14 @@ class Screen(Display):
         super().during_bootup(keyboard)
         if keyboard is not None:
             self._current_layer = keyboard.active_layers[0]
+            layer_config = self._config.layers_get_by_index(self._current_layer)
+            self._layer_value.text = layer_config['name']
 
     def before_matrix_scan(self, keyboard):
         super().before_matrix_scan(keyboard)
         if self.display is not None and self.display.root_group != self._screen_group:
             self.display.root_group = self._screen_group
-        
+
         if self._current_layer != keyboard.active_layers[0]:
             self._current_layer = keyboard.active_layers[0]
             layer_config = self._config.layers_get_by_index(self._current_layer)

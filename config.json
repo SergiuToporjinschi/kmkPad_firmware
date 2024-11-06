@@ -1,5 +1,7 @@
 {
     "debug" : true,
+    "title": "DEV Pad",
+    "version": "0.01",
     "screen": {
         "enabled": true,
         "width": 128,
@@ -14,29 +16,29 @@
     "keyboard": {
         "layers": [
             {
-                "name": "First",
+                "name": "Dev",
                 "index" : 0,
                 "active": true,
-                "map": ["TRNS", "w", "e", "r", "t", "N1","N2","N3","N4","N5"]
+                "map": ["KC.TRNS", "KC.TGS('UP')", "KC.E", "KC.F", "KC.T", "KC.N1","KC.F9","KC.LSHIFT(KC.F8)","KC.F7","KC.F8"]
             },
             {
                 "name":"Second",
                 "index" : 1,
                 "active": true,
                 "app" : "notepad++",
-                "map":  ["TRNS","N2","N3","N4","N5", "Q", "w", "e", "r", "t"]
+                "map":  ["KC.TRNS","KC.TRNS","KC.N3","KC.N4","KC.N5", "KC.Q", "KC.W", "KC.E", "KC.R", "KC.T"]
             },{
                 "name":"Another",
                 "index" : 2,
                 "active": true,
                 "app" : "notepad++",
-                "map":  ["TRNS","Y","U","I","T", "O", "w", "e", "r", "t"]
+                "map":  ["KC.TRNS","KC.TRNS","KC.U","KC.I","KC.T", "KC.O", "KC.W", "KC.E", "KC.R", "KC.T"]
             },{
                 "name":"Third",
                 "index" : 3,
                 "active": true,
                 "app" : "notepad++",
-                "map":  ["TRNS","B","C","D","E", "F", "G", "H", "I", "J"]
+                "map":  ["KC.TRNS","KC.TRNS","KC.C","KC.D","KC.E", "KC.F", "KC.G", "KC.H", "KC.I", "KC.J"]
            }
         ]
     },
@@ -51,7 +53,7 @@
                     "index": 0,
                     "active": true,
                     "app": "notepad++",
-                    "map": [ "VOLD", "VOLU", "MUTE"]
+                    "map": [ "KC.VOLD", "KC.VOLU", "KC.MUTE"]
                 }
             ]
         }
@@ -67,7 +69,7 @@
                     "index": 0,
                     "active": true,
                     "app": "notepad++",
-                    "map": [ "VOLD", "VOLU", "MUTE"]
+                    "map": ["KC.W", "KC.S", "KC.A", "KC.D", "KC.LSHIFT", "KC.X"]
                 }
             ]
         }
