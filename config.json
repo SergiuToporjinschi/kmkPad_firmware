@@ -27,8 +27,7 @@
                 "name": "Dev",
                 "index" : 0,
                 "map": ["KC.TRNS", "KC.TGS('UP')", "KC.E", "KC.F", "KC.T", "KC.N1","KC.F9","KC.LSHIFT(KC.F8)","KC.F7","KC.F8"]
-            },
-            {
+            },{
                 "name":"Second",
                 "index" : 1,
                 "app" : "notepad++",
