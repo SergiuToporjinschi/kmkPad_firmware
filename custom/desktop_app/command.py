@@ -21,8 +21,8 @@ class CommandHandler:
             "keyboardLayers": self._keyboardLayers,
             "changeActiveLayer": self._changeActiveLayer,
             "fetchAvailableBasicKeys": self._fetchAvailableBasicKeys,
-            "getPinConfig": self._getPinConfig,
-            "getLayerDescriptor": self._getLayerDescriptor,
+            # "getPinConfig": self._getPinConfig,
+            # "getLayerDescriptor": self._getLayerDescriptor,
         }
         pass
 
@@ -71,19 +71,19 @@ class CommandHandler:
     def _keyboardLayers(self, keyboard: KMKKeyboard, *args)->str:
         return json.dumps(keyboard.keymap)
     
-    def _getPinConfig(self, keyboard: KMKKeyboard, *args)->str:
-        diodeOrientation = "COL2ROW"
-        if keyboard.diode_orientation == DiodeOrientation.ROW2COL:
-            diodeOrientation = "ROW2COL"
+    # def _getPinConfig(self, keyboard: KMKKeyboard, *args)->str:
+    #     diodeOrientation = "COL2ROW"
+    #     if keyboard.diode_orientation == DiodeOrientation.ROW2COL:
+    #         diodeOrientation = "ROW2COL"
 
-        return json.dumps({
-            "RowPins": [str(pin) for pin in keyboard.row_pins],
-            "ColumnPins": [str(pin) for pin in keyboard.col_pins],
-            "DiodeOrientation": diodeOrientation
-        })
+    #     return json.dumps({
+    #         "RowPins": [str(pin) for pin in keyboard.row_pins],
+    #         "ColumnPins": [str(pin) for pin in keyboard.col_pins],
+    #         "DiodeOrientation": diodeOrientation
+    #     })
     
-    def _getLayerDescriptor(self, keyboard: KMKKeyboard, *args)->str:
-        return json.dumps(readLayerDescriptor())
+    # def _getLayerDescriptor(self, keyboard: KMKKeyboard, *args)->str:
+    #     return json.dumps(readLayerDescriptor())
 
     def _fetchAvailableBasicKeys(self, keyboard: KMKKeyboard, *args):
         debug(f'fetchAvailableBasicKeys')
@@ -268,43 +268,3 @@ class CommandHandler:
             jsonDict.append(template)
 
         return jsonDict
-
-
-
-
-
-
-
-
-
-
-########### Display Handlers ############ 
-    def _updateDisplay(self, keyboard):
-        if keyboard.extensions[0]:
-            self._displayLayer(keyboard)
-    def _displayLayer(self, keyboard):
-        dispExt = keyboard.extensions[0]
-
-        if dispExt:
-            # dispExt.render(1)
-            dispExt.display.wake()
-            scr = displayio.Group()
-            scr.append(
-                    label.Label(
-                        terminalio.FONT,
-                        text="Active layer:" + str(keyboard.active_layers[0]),
-                        color=0xFFFFFF,
-                        background_color=0x000000,
-                        anchor_point= (0.0, 0.0),
-                        anchored_position=(0, 0),
-                        label_direction="LTR",
-                        line_spacing=0.75,
-                        padding_left=1,
-                    )
-            )
-            dispExt.display.root_group = scr
-            # dispExt.render(keyboard.active_layers[0])
-
-        pass
-
-

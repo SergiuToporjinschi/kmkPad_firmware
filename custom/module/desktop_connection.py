@@ -13,13 +13,6 @@ class DesktopConnection(Module):
     commandHandler: CommandHandler = CommandHandler()
     
     # Move deviceInfo to configuration
-    deviceInfo = {
-        "Name": "Dev Pad",
-        "Version": "0.1",
-        "VID": "0x6001",
-        "PID": "0x1000"
-    }
-    
     def __init__(self):
         pass
 
@@ -72,7 +65,9 @@ class DesktopConnection(Module):
         
         if not self.connectionStatus:
             self.connectionStatus = True
-            self._writeAndFlash(json.dumps(self.deviceInfo))
+            import custom.desktop_app.config as config
+            c = config.ConfigHandler()
+            self._writeAndFlash(json.dumps(c.identification))
             return
 
         # Nothing to parse.

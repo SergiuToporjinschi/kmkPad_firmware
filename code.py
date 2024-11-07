@@ -41,7 +41,7 @@ if config.screen_enabled:
         off_time=config.screen_off_time,
         flip=config.screen_flip
     )
-    screen._config = config  # Ensure the screen has access to the configuration
+    screen.config = config  # Ensure the screen has access to the configuration
     keyboard.extensions.append(screen)
 
 # ----------------------------------------------------encoder

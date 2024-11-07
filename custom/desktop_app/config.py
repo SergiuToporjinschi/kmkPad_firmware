@@ -31,12 +31,16 @@ class ConfigHandler:
         return self.config.get('debug', False)
     
     @property
-    def title(self) -> str:
-        return self.config['title']
+    def identification(self) -> str:
+        return self.config['identification']
+    
+    @property
+    def identification_name(self) -> str:
+        return self.config['identification']['name']
 
     @property
-    def version(self) -> str:
-        return self.config['version']
+    def identification_version(self) -> str:
+        return self.config['identification']['version']
     
     #----------------------------------------------------keyboard
     @property
@@ -100,14 +104,6 @@ class ConfigHandler:
     @property
     def encoder_GPIO_pins(self) -> tuple:
         return self._build_gpios(self.config['encoders'][0]['gpioPins'])
-    
-    def _build_gpios(self, gpio_pins: list) -> tuple:
-        outPut = ()
-        for boarGPIO in gpio_pins:
-            gpio = {}
-            exec(f'gpio = board.{boarGPIO}', {'board': board}, gpio)
-            outPut += (gpio.get('gpio'),)
-        return outPut
 
     @property
     def encoder_enabled(self) -> int:
@@ -139,12 +135,6 @@ class ConfigHandler:
         return self._build_gpios(self.config['joystickKeys'][0]['gpioPins'])
 
     #----------------------------------------------------layers
-    def layers_get_by_index(self, index: int) -> dict:
-        for layer in self.config['keyboard']['layers']:
-            if layer['index'] == index:
-                return layer
-        return None
-
     @property
     def media_keys_enabled(self) -> bool:
         return True
@@ -184,7 +174,24 @@ class ConfigHandler:
             else:
                 _joystickKey_layers[i] = [[KC.TRNS, KC.TRNS, KC.TRNS, KC.TRNS, KC.TRNS, KC.TRNS]]
         return _joystickKey_layers
+        
+    def _build_gpios(self, gpio_pins: list) -> tuple:
+        outPut = ()
+        for boarGPIO in gpio_pins:
+            gpio = {}
+            exec(f'gpio = board.{boarGPIO}', {'board': board}, gpio)
+            outPut += (gpio.get('gpio'),)
+        return outPut
 
+    def layers_get_by_index(self, index: int) -> dict:
+        for layer in self.config['keyboard']['layers']:
+            if layer['index'] == index:
+                return layer
+        return None
+    
+    def layers_get_count(self) -> int:
+        return len(self.config['keyboard']['layers'])
+    
     def _build_key_map(self, key_map: list, no_of_keys: int):
         ret_key_map = [] 
         for i in range(no_of_keys):

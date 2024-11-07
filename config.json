@@ -1,7 +1,12 @@
 {
     "debug" : true,
-    "title": "DEV Pad",
-    "version": "0.01",
+    "identification": {
+        "name": "DEV Pad",
+        "version": "0.01",
+        "VID": "0x6001",
+        "PID": "0x1000",
+        "url": "https://github.com/SergiuToporjinschi/kmkPad_firmware"
+    },
     "screen": {
         "enabled": true,
         "width": 128,
@@ -21,25 +26,21 @@
             {
                 "name": "Dev",
                 "index" : 0,
-                "active": true,
                 "map": ["KC.TRNS", "KC.TGS('UP')", "KC.E", "KC.F", "KC.T", "KC.N1","KC.F9","KC.LSHIFT(KC.F8)","KC.F7","KC.F8"]
             },
             {
                 "name":"Second",
                 "index" : 1,
-                "active": true,
                 "app" : "notepad++",
                 "map":  ["KC.TRNS","KC.TRNS","KC.N3","KC.N4","KC.N5", "KC.Q", "KC.W", "KC.E", "KC.R", "KC.T"]
             },{
                 "name":"Another",
                 "index" : 2,
-                "active": true,
                 "app" : "notepad++",
                 "map":  ["KC.TRNS","KC.TRNS","KC.U","KC.I","KC.T", "KC.O", "KC.W", "KC.E", "KC.R", "KC.T"]
             },{
                 "name":"Third",
                 "index" : 3,
-                "active": true,
                 "app" : "notepad++",
                 "map":  ["KC.TRNS","KC.TRNS","KC.C","KC.D","KC.E", "KC.F", "KC.G", "KC.H", "KC.I", "KC.J"]
            }
@@ -55,7 +56,6 @@
                 {
                     "name": "Dev",
                     "index": 0,
-                    "active": true,
                     "app": "notepad++",
                     "map": [ "KC.VOLD", "KC.VOLU", "KC.MUTE"]
                 }
@@ -72,7 +72,6 @@
                 {
                     "name": "Dev",
                     "index": 0,
-                    "active": true,
                     "app": "notepad++",
                     "map": ["KC.W", "KC.S", "KC.A", "KC.D", "KC.LSHIFT", "KC.X"]
                 }
