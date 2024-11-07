@@ -31,7 +31,6 @@ class Screen(Display):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        debug("Screen extension initialized")
         self._layer_names = None
         self._layer_value = None
         self._initialized = False

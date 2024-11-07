@@ -1,4 +1,3 @@
-from kmk.extensions import Extension
 from kmk.utils import Debug
 from kmk.modules import Module
 from usb_cdc import data
