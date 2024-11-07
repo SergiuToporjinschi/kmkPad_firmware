@@ -1,8 +1,6 @@
 import board 
 
 from kmk.kmk_keyboard import KMKKeyboard
-from kmk.keys import KC
-from kmk.scanners import DiodeOrientation
 from custom.module.layers import Layers
 
 from custom.module.desktop_connection import DesktopConnection
