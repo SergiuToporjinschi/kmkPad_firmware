@@ -35,3 +35,9 @@ jobs:
 
     - name: Archive build content
       run: zip -r build.zip build
+
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-zip
+        path: build.zip
