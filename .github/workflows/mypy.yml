@@ -23,7 +23,10 @@ jobs:
 
     - name: Run mypy
       run: mypy custom/screen/sh1106_i2c.py --config-file .github/mypy.ini
-
+      
+    - name: Set executable permission for mpy-cross
+      run: chmod +x .build/mpy-cross
+      
     - name: Run mpy
       run: |
         mkdir -p build
