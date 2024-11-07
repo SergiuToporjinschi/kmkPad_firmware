@@ -31,7 +31,7 @@ jobs:
         find . -name '*.py' ! -name 'code.py' ! -name 'boot.py' -exec sh -c '
           for file; do
             mkdir -p "build/$(dirname "$file")"
-            mpy-cross -o "build/${file%.py}.mpy" "$file"
+            .build/mpy-cross -o "build/${file%.py}.mpy" "$file"
           done
         ' sh {} +
 
