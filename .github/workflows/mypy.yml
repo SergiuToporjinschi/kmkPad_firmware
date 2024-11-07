@@ -30,12 +30,18 @@ jobs:
     - name: Run mpy
       run: |
         mkdir -p build
-        find . -name '*.py' -exec sh -c '
+        find . -path ./lib -prune -o -name '*.py' -exec sh -c '
           for file; do
             mkdir -p "build/$(dirname "$file")"
             .build/mpy-cross -o "build/${file%.py}.mpy" "$file"
           done
         ' sh {} +
+
+    - name: Copy lib content and root files to build
+      run: |
+        cp -r lib/* build/
+        cp -r fonts build/
+        cp *.json *.md build/
 
     - name: Archive build content
       run: zip -r build.zip build
