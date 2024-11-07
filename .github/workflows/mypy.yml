@@ -25,5 +25,6 @@ jobs:
       run: mypy custom/screen/sh1106_i2c.py --config-file .github/mypy.ini
 
     - name: Run mpy
-      run: mpy-cross custom/screen/sh1106_i2c.py
+      run: |
+        find custom -name "*.py" -exec mpy-cross {} \
  
