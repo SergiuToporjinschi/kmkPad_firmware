@@ -26,5 +26,7 @@ jobs:
 
     - name: Run mpy
       run: |
-        find custom -name "*.py" -exec mpy-cross {} \
- 
+        for file in custom/screen/*.py; do
+          ./micropython/mpy-cross/mpy-cross "$file"
+        done
+      # run: mpy-cross custom/screen/sh1106_i2c.py
