@@ -29,7 +29,8 @@ jobs:
         mkdir -p build
         find . -name '*.py' -exec sh -c '
           for file; do
-            mpy-cross -o "build/$(basename "$file" .py).mpy" "$file"
+            mkdir -p "build/$(dirname "$file")"
+            mpy-cross -o "build/${file%.py}.mpy" "$file"
           done
         ' sh {} +
 
