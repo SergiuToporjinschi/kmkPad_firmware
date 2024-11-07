@@ -11,7 +11,7 @@ displayio.release_displays()
 debug = Debug(__name__)
 
 class SH1106_I2C(DisplayBase):
-    def __init__(self, sda:Pin=None, sck:Pin=None, i2c=None, device_address=0x3C):
+    def __init__(self, sda=None, sck=None, i2c=None, device_address=0x3C):
         self.device_address = device_address
         # i2c initialization
         self.i2c = i2c
