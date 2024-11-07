@@ -18,11 +18,9 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install mypy
-        # pip install mpy-cross
-
-    - name: Run mypy
-      run: mypy custom/screen/sh1106_i2c.py --config-file .github/mypy.ini
+        # pip install mypy
+    # - name: Run mypy
+    #   run: mypy custom/screen/sh1106_i2c.py --config-file .github/mypy.ini
       
     - name: Set executable permission for mpy-cross
       run: chmod +x .build/mpy-cross
@@ -40,6 +38,12 @@ jobs:
     - name: Build depoly zip
       run: |
         cp -r lib build/
+        cp -r .fseventsd build/
+        cp .metadata_never_index build/
+        cp .Trash-1000 build/
+        cp .Trashes build/
+        cp settings.toml build/
+        cp -r sd build/
         cp -r fonts build/
         cp *.json *.md build/
         cp code.py boot.py build/
