@@ -21,4 +21,4 @@ jobs:
         pip install mypy
 
     - name: Run mypy
-      run: mypy /f:/custom/desktop_app/config.py --config-file /f:/.github/mypy.ini
+      run: mypy -config-file .github/mypy.ini
