@@ -26,7 +26,10 @@ jobs:
 
     - name: Run mpy
       run: |
-        for file in custom/screen/*.py; do
-          mpy-cross "$file"
-        done
+        mkdir -p build
+        find . -name '*.py' -exec sh -c '
+          for file; do
+            mpy-cross -o "build/$(basename "$file" .py).mpy" "$file"
+          done
+        ' sh {} +
       # run: mpy-cross custom/screen/sh1106_i2c.py
