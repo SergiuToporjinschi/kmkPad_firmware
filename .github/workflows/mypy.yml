@@ -32,4 +32,6 @@ jobs:
             mpy-cross -o "build/$(basename "$file" .py).mpy" "$file"
           done
         ' sh {} +
-      # run: mpy-cross custom/screen/sh1106_i2c.py
+
+    - name: Archive build content
+      run: zip -r build.zip build
