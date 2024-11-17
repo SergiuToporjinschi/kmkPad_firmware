@@ -1,38 +1,32 @@
-import json
 import board 
 from kmk.keys import KC
-from kmk.utils import Debug
 from kmk.keys import KeyboardKey, ConsumerKey, Key
-debug = Debug(__name__)
 
-config = None
+def readConfiguration():
+    from json import load
+    with open('/config.json') as f:
+        return load(f)
+
+def readConfig(key = None):
+    from json import dumps
+    if key is None:
+        return dumps(readConfiguration(), separators=(',', ':'))
+    else:
+        return dumps(readConfiguration()[key], separators=(',', ':'))
+
 
 class ConfigHandler:
     _nr_keyboard_layers = None
     _no_of_keys = None
     
     def __init__(self):
-        try:
-            with open('/config.json') as f:
-                self.config = json.load(f)
-        except FileNotFoundError:
-            if debug.enabled:
-                debug('Config file not found')
-            self.config = {}
-        except json.JSONDecodeError:
-            if debug.enabled:
-                debug('Error decoding config file')
-            self.config = {}
-        if debug.enabled:
-            debug('Config loaded')
+        from json import load
+        with open('/config.json') as f:
+            self.config = load(f)
         
     @property
     def debug_enabled(self) -> bool:
         return self.config.get('debug', False)
-    
-    @property
-    def identification(self) -> str:
-        return self.config['identification']
     
     @property
     def identification_name(self) -> str:
@@ -141,7 +135,7 @@ class ConfigHandler:
 
     @property
     def macro_keys_enabled(self) -> bool:
-        return True
+        return False
 
     @property
     def layers_key_maps(self) -> list:

@@ -64,9 +64,8 @@ class DesktopConnection(Module):
         
         if not self.connectionStatus:
             self.connectionStatus = True
-            import custom.desktop_app.config as config
-            c = config.ConfigHandler()
-            self._writeAndFlash(json.dumps(c.identification))
+            from custom.desktop_app.config import readConfig
+            self._writeAndFlash(readConfig('identification'))
             return
 
         # Nothing to parse.

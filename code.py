@@ -15,7 +15,7 @@ keyboard.row_pins = config.keyboard_GPIO_pin_rows
 keyboard.diode_orientation = config.keyboard_diode_orientation
 
 keyboard.extensions = []
-keyboard.modules = [Layers(), DesktopConnection()]
+keyboard.modules = [DesktopConnection()]
 keyboard.debug_enabled = config.debug_enabled
 
 if config.media_keys_enabled:
